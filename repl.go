@@ -8,11 +8,7 @@ import (
 )
 
 func startRepl() {
-	config := ConfigCommand{
-		Previous: "",
-		Next:     "https://pokeapi.co/api/v2/location-area",
-		isBack:   false,
-	}
+	config := &configCommand{}
 
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
@@ -25,23 +21,18 @@ func startRepl() {
 		}
 
 		command := inputWordList[0]
-		if command == "mapb" {
-			config.isBack = true
-		}
 
 		c, ok := getCommands()[command]
 		if !ok {
 			fmt.Printf("Invalid command %s\n", command)
 			continue
 		}
-		configResult, err := c.callback(config)
+		err := c.callback(config)
 
 		if err != nil {
 			fmt.Println(err)
 		}
 
-		config = configResult
-		config.isBack = false
 		// fmt.Println(config.Next)
 		//fmt.Printf("Your command was: %s\n", inputWL[0])
 	}
@@ -57,7 +48,7 @@ func cleanInput(text string) []string {
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(ConfigCommand) (ConfigCommand, error)
+	callback    func(*configCommand) error
 }
 
 func getCommands() map[string]cliCommand {
@@ -80,7 +71,7 @@ func getCommands() map[string]cliCommand {
 		"mapb": {
 			name:        "mapb",
 			description: "Lists prior 20 locations",
-			callback:    commandMap,
+			callback:    commandMapb,
 		},
 	}
 }

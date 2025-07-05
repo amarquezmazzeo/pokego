@@ -1,7 +1,6 @@
 package main
 
-type ConfigCommand struct {
-	Next     string
-	Previous string
-	isBack   bool
+type configCommand struct {
+	nextURL     *string
+	previousURL *string
 }

@@ -1,58 +1,49 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
-	"net/http"
+
+	"github.com/amarquezmazzeo/pokego/internal/pokeapi"
 )
 
-func commandMap(config ConfigCommand) (ConfigCommand, error) {
-	URL := config.Next
-	// fmt.Println(config)
+func commandMap(config *configCommand) error {
 
-	if config.isBack {
-		if config.Previous == "" {
-			err := errors.New("you're on the first page")
-			return config, err
-		}
-		URL = config.Previous
-	}
-
-	if len(URL) == 0 {
-		URL = "https://pokeapi.co/api/v2/location-area"
+	locationResp, err := pokeapi.ListLocations(config.nextURL)
+	if err != nil {
+		return err
 	}
 
 	// fmt.Println(URL)
 
-	res, err := http.Get(URL)
-	if err != nil {
-		return config, err
+	config.nextURL = locationResp.Next
+	config.previousURL = locationResp.Previous
+
+	for _, location := range locationResp.Results {
+		fmt.Println(location.Name)
 	}
 
-	var locationResponse LocationResponse
-
-	dec := json.NewDecoder(res.Body)
-	if err := dec.Decode(&locationResponse); err != nil {
-		return config, err
-	}
-	for _, element := range locationResponse.Results {
-		fmt.Println(element.Name)
-	}
-
-	config.Next = locationResponse.Next
-	config.Previous = locationResponse.Previous
-	config.isBack = false
-
-	return config, nil
+	return nil
 }
 
-type LocationResponse struct {
-	Count    int    `json:"count"`
-	Next     string `json:"next"`
-	Previous string `json:"previous"`
-	Results  []struct {
-		Name string `json:"name"`
-		URL  string `json:"url"`
-	} `json:"results"`
+func commandMapb(config *configCommand) error {
+	if config.previousURL == nil {
+		return errors.New("you're in the first page")
+	}
+
+	locationResp, err := pokeapi.ListLocations(config.previousURL)
+	if err != nil {
+		return err
+	}
+
+	// fmt.Println(URL)
+
+	config.nextURL = locationResp.Next
+	config.previousURL = locationResp.Previous
+
+	for _, location := range locationResp.Results {
+		fmt.Println(location.Name)
+	}
+
+	return nil
 }
