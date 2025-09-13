@@ -26,13 +26,14 @@ func startRepl() {
 		}
 
 		command := inputWordList[0]
+		args := inputWordList[1:]
 
 		c, ok := getCommands()[command]
 		if !ok {
 			fmt.Printf("Invalid command %s\n", command)
 			continue
 		}
-		err := c.callback(config)
+		err := c.callback(config, args)
 
 		if err != nil {
 			fmt.Println(err)
@@ -53,7 +54,7 @@ func cleanInput(text string) []string {
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*configCommand) error
+	callback    func(config *configCommand, args []string) error
 }
 
 func getCommands() map[string]cliCommand {
@@ -77,6 +78,11 @@ func getCommands() map[string]cliCommand {
 			name:        "mapb",
 			description: "Lists prior 20 locations",
 			callback:    commandMapb,
+		},
+		"explore": {
+			name:        "explore",
+			description: "Lists pokemon in given location",
+			callback:    commandExplore,
 		},
 	}
 }

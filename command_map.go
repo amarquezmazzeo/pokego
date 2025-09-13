@@ -8,7 +8,7 @@ import (
 	"github.com/amarquezmazzeo/pokego/internal/pokeapi"
 )
 
-func commandMap(config *configCommand) error {
+func commandMap(config *configCommand, args []string) error {
 	if config.nextURL == nil {
 		defaultURL := "https://pokeapi.co/api/v2/location-area?offset=0&limit=20"
 		config.nextURL = &defaultURL
@@ -50,7 +50,7 @@ func commandMap(config *configCommand) error {
 	return nil
 }
 
-func commandMapb(config *configCommand) error {
+func commandMapb(config *configCommand, args []string) error {
 	if config.previousURL == nil {
 		return errors.New("you're on the first page")
 	}
