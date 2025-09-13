@@ -9,5 +9,5 @@ type configCommand struct {
 	nextURL     *string
 	previousURL *string
 	cache       *pokecache.Cache
-	pokedex     map[string]pokeapi.Pokemon
+	pokedex     map[string]pokeapi.PokemonResponse
 }

@@ -59,3 +59,30 @@ func ExploreLocation(locationArea *string) (ExploreResponse, error) {
 	}
 	return exploreResp, nil
 }
+
+func GetPokemonStats(pokemonName *string) (PokemonResponse, error) {
+	if pokemonName == nil || *pokemonName == "" {
+		return PokemonResponse{}, fmt.Errorf("pokemonName must not be empty")
+	}
+
+	name := url.PathEscape(*pokemonName)
+	URL := baseURL + "/pokemon/" + name
+
+	res, err := http.Get(URL)
+	if err != nil {
+		return PokemonResponse{}, fmt.Errorf("GET %s: %w", URL, err)
+	}
+
+	if res.StatusCode != http.StatusOK {
+		return PokemonResponse{}, fmt.Errorf("GET %s: unexpected status: %d", URL, res.StatusCode)
+	}
+
+	var pokemonResponse PokemonResponse
+
+	dec := json.NewDecoder(res.Body)
+	if err := dec.Decode(&pokemonResponse); err != nil {
+		return PokemonResponse{}, fmt.Errorf("decode pokemon response: %w", err)
+	}
+
+	return pokemonResponse, nil
+}

@@ -1,0 +1,1 @@
+[ ] Refactor api->cache fetching logic (move caching interactions to api package only) - commands should not interact with caching.
