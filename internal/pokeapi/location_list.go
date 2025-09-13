@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func ListLocations(pageURL *string) (locationResponse, error) {
+func ListLocations(pageURL *string) (LocationResponse, error) {
 	URL := baseURL + "/location-area"
 	// fmt.Println(config)
 	if pageURL != nil {
@@ -14,15 +14,15 @@ func ListLocations(pageURL *string) (locationResponse, error) {
 
 	res, err := http.Get(URL)
 	if err != nil {
-		return locationResponse{}, err
+		return LocationResponse{}, err
 	}
 	defer res.Body.Close()
 
-	var locationResp locationResponse
+	var locationResp LocationResponse
 
 	dec := json.NewDecoder(res.Body)
 	if err := dec.Decode(&locationResp); err != nil {
-		return locationResponse{}, err
+		return LocationResponse{}, err
 	}
 
 	return locationResp, nil

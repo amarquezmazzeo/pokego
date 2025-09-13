@@ -5,10 +5,15 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
+
+	pokecache "github.com/amarquezmazzeo/pokego/internal/pokecache"
 )
 
 func startRepl() {
-	config := &configCommand{}
+	config := &configCommand{
+		cache: pokecache.NewCache(25 * time.Second),
+	}
 
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
